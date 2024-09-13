@@ -1,0 +1,66 @@
+<!-- Header : le menu de navigation -->
+<header>
+    <nav style="text-align: center;">
+        <ul style="list-style-type: none; padding: 0; margin: 0; display: inline-block;">
+            <li style="display: inline; margin-right: 20px;"><a href="{% url 'home' %}" style="color: purple; font-weight: bold; text-decoration: none;">Accueil</a></li>
+            <li style="display: inline; margin-right: 20px;"><a href="{% url 'poemes' %}" style="color: purple; font-weight: bold; text-decoration: none;">Poèmes</a></li>
+            <li style="display: inline; margin-right: 20px;"><a href="{% url 'memoire' %}" style="color: purple; font-weight: bold; text-decoration: none;">Mémoire</a></li>
+            <li style="display: inline;"><a href="{% url 'apropos' %}" style="color: purple; font-weight: bold; text-decoration: none;">À Propos</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Lignes horizontales au tour des filtres -->
+<hr>
+<!-- Formulaire de filtre -->
+<form method="get" action="">
+    <label for="langue"><strong>Affinez votre recherche par langue :</strong></label><br>
+    <select name="langue" id="langue">
+        <option value="">Toutes</option>
+        <option value="fr" {% if langue == "fr" %}selected{% endif %}>Français</option>
+        <option value="pt" {% if langue == "pt" %}selected{% endif %}>Portugais</option>
+        <option value="bi" {% if langue == "bi" %}selected{% endif %}>Bilingue</option>
+    </select><br><br>
+
+    <label for="auteur"><strong>Affinez votre recherche par auteur : Veuillez d'abord choisir la langue des poèmes, puis saisir le nom de l'auteur en MAJUSCULES :</strong></label><br>
+    <input type="text" name="auteur" id="auteur" value="{{ auteur|default_if_none:'' }}">
+
+    <br><br><button type="submit">Filtrer</button>
+</form>
+<hr>
+
+<!-- Affichage des poèmes -->
+{% for poeme in page_obj %}
+    <div style="margin-bottom: 20px;">
+        <h2 style="color: purple; font-weight: bold;">{{ poeme.titre }}</h2>
+        <p><span style="color: purple; font-weight: bold;">Auteur:</span> {{ poeme.auteur }}</p>
+        <p><span style="color: purple; font-weight: bold;">Langue:</span> {{ poeme.get_langue_display }}</p>
+        <!-- Saut les lignes pour les poèmes -->
+        <p>{{ poeme.contenu|linebreaksbr }}</p>
+    </div>
+    
+    <!-- Ligne de séparation entre deux poèmes -->
+    <hr style="border: 1px solid #ccc;">
+{% endfor %}
+
+<!-- Pagination -->
+<div>
+    <span>Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    <div style="margin-top: 10px;">
+        <!-- Bouton Précédent -->
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&langue={{ langue|default_if_none:'' }}&auteur={{ auteur|default_if_none:'' }}" 
+               style="padding: 5px 10px; background-color: #eee; border-radius: 5px; text-decoration: none;">
+                Précédent
+            </a>
+        {% endif %}
+        
+        <!-- Bouton Suivant -->
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&langue={{ langue|default_if_none:'' }}&auteur={{ auteur|default_if_none:'' }}" 
+               style="padding: 5px 10px; background-color: #eee; border-radius: 5px; text-decoration: none; margin-left: 10px;">
+                Suivant
+            </a>
+        {% endif %}
+    </div>
+</div>

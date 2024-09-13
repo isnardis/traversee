@@ -1,0 +1,47 @@
+<!-- videos.html -->
+<form method="get">
+    <label for="langue">Filtrer par langue:</label>
+    <select name="langue" id="langue">
+        <option value="">Toutes</option>
+        <option value="fr">Français</option>
+        <option value="pt">Portugais</option>
+        <option value="bi">Bilingue</option>
+    </select>
+
+    <label for="lieu">Filtrer par lieu:</label>
+    <select name="lieu" id="lieu">
+        <option value="">Tous</option>
+        <option value="int">Intérieur</option>
+        <option value="ext">Extérieur</option>
+    </select>
+
+    <label for="musique">Inclut musique:</label>
+    <input type="checkbox" name="musique" id="musique" {% if musique == 'on' %}checked{% endif %}>
+
+    <button type="submit">Filtrer</button>
+</form>
+
+{% for video in page_obj %}
+    <h2>{{ video.titre }}</h2>
+    <p>Description: {{ video.description }}</p>
+    <p>Langue: {{ video.get_langue_display }}</p>
+    <p>Lieu: {{ video.get_lieu_display }}</p>
+    <p>Musique: {% if video.musique %}Oui{% else %}Non{% endif %}</p>
+    <video controls>
+        <source src="{{ video.fichier.url }}" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture des vidéos.
+    </video>
+{% endfor %}
+
+<div>
+    <span>Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&langue={{ langue }}&lieu={{ lieu }}&musique={{ musique }}">Précédent</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&langue={{ langue }}&lieu={{ lieu }}&musique={{ musique }}">Suivant</a>
+        {% endif %}
+    </div>
+</div>
